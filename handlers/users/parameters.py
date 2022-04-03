@@ -25,6 +25,9 @@ async def bot_parameters(message: types.Message):
             ),
             reply_markup=parameters_keyboard()
         )
+    else:
+        await UserParametersState.height.set()
+        await message.answer("Пришли мне свой рост, чтобы я его записал!")
 
 
 @dp.callback_query_handler(new_user_parameters_callback.filter(), state='*')
