@@ -2,6 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 
+from keyboards.default.menu import ABOUT_USER
 from keyboards.inline.callback_data import new_user_parameters_callback
 from keyboards.inline.parameters import parameters_keyboard
 from loader import dp
@@ -10,6 +11,7 @@ from utils.db_api.database import UserParametersPerDay
 
 
 @dp.message_handler(commands=['parameters'], state='*')
+@dp.message_handler(text=ABOUT_USER, state='*')
 async def bot_parameters(message: types.Message):
     last_parameters = await UserParametersPerDay.query.where(
         UserParametersPerDay.user_id == message.from_user.id).order_by(UserParametersPerDay.id.desc()).gino.first()

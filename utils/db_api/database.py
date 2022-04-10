@@ -1,8 +1,10 @@
+from datetime import date, timedelta
+
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.exceptions import BotBlocked
 from gino import Gino
-from sqlalchemy import String, Index, Sequence, sql, DateTime, func
+from sqlalchemy import String, Index, Sequence, sql, DateTime, func, and_
 from sqlalchemy import Table, Column, Integer, ForeignKey
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.declarative import declarative_base
@@ -86,8 +88,14 @@ class UserCaloriesPerDay(BaseModel):
     user_id = Column(Integer, ForeignKey('users.id'))
     quantity = Column(Integer)
     created_at = Column(DateTime, server_default=func.now())
+    gramms = Column(Integer)
+    product = Column(String(128))
 
     _idx = Index('user_calories_per_days_id_index', 'id')
+
+    @classmethod
+    async def for_day(cls, date_obj: date):
+        return cls.query.where(and_(cls.created_at >= date_obj, cls.created_at < date_obj + timedelta(1))).gino.all()
 
 
 class Exercise(BaseModel):
@@ -111,12 +119,12 @@ class WorkoutIteration(BaseModel):
 workout_iteration_association_table = Table(
     'workout_iterations', Base.metadata,
     Column('workout_iteration_id', ForeignKey('workout_iterations.id')),
-    Column('workout_id', ForeignKey('workouts.id'))
+    Column('workout_id', ForeignKey('WORKOUTS.id'))
 )
 
 
 class Workout(BaseModel):
-    __tablename__ = 'workouts'
+    __tablename__ = 'WORKOUTS'
 
     id = Column(Integer, Sequence('workout_id_seq'), primary_key=True)
     name = Column(String(32))
