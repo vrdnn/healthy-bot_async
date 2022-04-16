@@ -2,7 +2,6 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import state
 from aiogram.dispatcher.filters.builtin import CommandStart
-
 from loader import dp
 from states.start import UserStartState
 from utils.db_api.database import User, UserParametersPerDay
