@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 
 from keyboards.default.menu import ABOUT_USER
-from keyboards.inline.callback_data import new_user_parameters_callback
+from keyboards.inline.callback_data import user_parameters_callback
 from keyboards.inline.parameters import parameters_keyboard
 from loader import dp
 from states.parameters import UserParametersState
@@ -32,7 +32,7 @@ async def bot_parameters(message: types.Message):
         await message.answer("Пришли мне свой рост, чтобы я его записал!")
 
 
-@dp.callback_query_handler(new_user_parameters_callback.filter(), state='*')
+@dp.callback_query_handler(user_parameters_callback.filter(), state='*')
 async def bot_new_user_parameters_callback(call: CallbackQuery, callback_data: dict):
     await UserParametersState.height.set()
     await call.message.answer("Пришли мне свой рост, чтобы я его записал!")

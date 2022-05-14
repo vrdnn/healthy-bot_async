@@ -1,9 +1,13 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import state
 from aiogram.dispatcher.filters.builtin import CommandStart
+from aiogram.types import CallbackQuery
+
+from keyboards.default import menu
+from keyboards.inline.callback_data import user_sex_callback
+from keyboards.inline.parameters import parameters_sex_keyboard
 from loader import dp
-from states.start import UserStartState
+from states.parameters import UserParametersState
 from utils.db_api.database import User, UserParametersPerDay
 
 
@@ -12,18 +16,27 @@ async def bot_start(message: types.Message):
     await User.get_or_create(
         id=message.from_user.id, first_name=message.from_user.first_name, username=message.from_user.username
     )
-    await message.answer(f"Привет, {message.from_user.full_name}! Давай заполним твои параметры. Пришли мне свой рост")
-    await UserStartState.height.set()
+    await message.answer(f"Привет, {message.from_user.full_name}! Давай заполним информацию о тебе. Твой пол:",
+                         reply_markup=parameters_sex_keyboard())
 
 
-@dp.message_handler(content_types=['text'], state=UserStartState.height)
+@dp.callback_query_handler(user_sex_callback.filter())
+async def bot_set_sex(call: CallbackQuery, callback_data: dict):
+    user = await User.get(id=call.from_user.id)
+    await user.update(sex=callback_data['sex']).apply()
+
+    await call.message.answer(f"Теперь пришли мне рост", reply_markup=menu)
+    await UserParametersState.height.set()
+
+
+@dp.message_handler(content_types=['text'], state=UserParametersState.height)
 async def bot_set_height(message: types.Message, state: FSMContext):
-    await message.answer(f"Теперь пришли мне вес")
+    await message.answer(f"Теперь пришли мне вес", reply_markup=menu)
     await state.update_data(height=message.text)
-    await UserStartState.weight.set()
+    await UserParametersState.weight.set()
 
 
-@dp.message_handler(content_types=['text'], state=UserStartState.weight)
+@dp.message_handler(content_types=['text'], state=UserParametersState.weight)
 async def bot_set_weight(message: types.Message, state: FSMContext):
     await message.answer(f"Отлично, я записал твои данные!")
     await state.update_data(weight=message.text)

@@ -12,7 +12,7 @@ from sqlalchemy.orm import relationship
 
 from data.config import DATABASE_URL
 from .types import ChoiceType
-from .constants import WEIGHT_LOSS, WEIGHT_GAIN, WEIGHT_TONE
+from .constants import WEIGHT_LOSS, WEIGHT_GAIN, WEIGHT_TONE, MAN, WOMAN
 
 Base = declarative_base()
 
@@ -54,6 +54,7 @@ class User(BaseModel):
     id = Column(Integer, primary_key=True, unique=True)
     first_name = Column(String(128))
     username = Column(String(128))
+    sex = Column(ChoiceType({MAN: MAN, WOMAN: WOMAN}), nullable=True)
 
     _idx = Index('user_id_index', 'id')
 
@@ -88,14 +89,15 @@ class UserCaloriesPerDay(BaseModel):
     user_id = Column(Integer, ForeignKey('users.id'))
     quantity = Column(Integer)
     created_at = Column(DateTime, server_default=func.now())
-    gramms = Column(Integer)
+    gram = Column(Integer)
     product = Column(String(128))
 
     _idx = Index('user_calories_per_days_id_index', 'id')
 
     @classmethod
-    async def for_day(cls, date_obj: date):
-        return cls.query.where(and_(cls.created_at >= date_obj, cls.created_at < date_obj + timedelta(1))).gino.all()
+    async def for_day(cls, user_id: int, date_obj: date):
+        return await cls.query.where(and_(cls.created_at >= date_obj, cls.created_at < date_obj + timedelta(1),
+                                          cls.user_id == user_id)).gino.all()
 
 
 class Exercise(BaseModel):
@@ -124,7 +126,7 @@ workout_iteration_association_table = Table(
 
 
 class Workout(BaseModel):
-    __tablename__ = 'WORKOUTS'
+    __tablename__ = 'workouts'
 
     id = Column(Integer, Sequence('workout_id_seq'), primary_key=True)
     name = Column(String(32))
