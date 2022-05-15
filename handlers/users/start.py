@@ -16,7 +16,8 @@ async def bot_start(message: types.Message):
     await User.get_or_create(
         id=message.from_user.id, first_name=message.from_user.first_name, username=message.from_user.username
     )
-    await message.answer(f"Привет, {message.from_user.full_name}! Давай заполним информацию о тебе. Твой пол:",
+    await message.answer(f"Привет, {message.from_user.full_name}! Я твой бот-помощник для поддержания здорового "
+                         f"образа жизни. Для начала давай заполним информацию о тебе. Укажи свой пол:",
                          reply_markup=parameters_sex_keyboard())
 
 
@@ -31,16 +32,22 @@ async def bot_set_sex(call: CallbackQuery, callback_data: dict):
 
 @dp.message_handler(content_types=['text'], state=UserParametersState.height)
 async def bot_set_height(message: types.Message, state: FSMContext):
-    await message.answer(f"Теперь пришли мне вес", reply_markup=menu)
-    await state.update_data(height=message.text)
-    await UserParametersState.weight.set()
+    if message.text.isdigit():
+        await message.answer(f"Теперь пришли мне вес", reply_markup=menu)
+        await state.update_data(height=message.text)
+        await UserParametersState.weight.set()
+    else:
+        await message.answer("Некорректные данные, попробуй еще раз")
 
 
 @dp.message_handler(content_types=['text'], state=UserParametersState.weight)
 async def bot_set_weight(message: types.Message, state: FSMContext):
-    await message.answer(f"Отлично, я записал твои данные!")
-    await state.update_data(weight=message.text)
-    data = await state.get_data()
-    await state.reset_state(with_data=True)
-    await UserParametersPerDay.create(user_id=message.from_user.id, height=int(data['height']),
-                                      weight=int(data['weight']))
+    if message.text.isdigit():
+        await message.answer(f"Отлично, я записал твои данные!")
+        await state.update_data(weight=message.text)
+        data = await state.get_data()
+        await state.reset_state(with_data=True)
+        await UserParametersPerDay.create(user_id=message.from_user.id, height=int(data['height']),
+                                          weight=int(data['weight']))
+    else:
+        await message.answer("Некорректные данные, попробуй еще раз")
