@@ -13,7 +13,7 @@ from utils.db_api.database import User, UserParametersPerDay
 
 @dp.message_handler(CommandStart(), state='*')
 async def bot_start(message: types.Message):
-    await User.get_or_create(
+    await User.get_by_id_or_create(
         id=message.from_user.id, first_name=message.from_user.first_name, username=message.from_user.username
     )
     await message.answer(f"Привет, {message.from_user.full_name}! Я твой бот-помощник для поддержания здорового "
@@ -23,7 +23,7 @@ async def bot_start(message: types.Message):
 
 @dp.callback_query_handler(user_sex_callback.filter())
 async def bot_set_sex(call: CallbackQuery, callback_data: dict):
-    user = await User.get(id=call.from_user.id)
+    user = await User.get(User.id == call.from_user.id)
     await user.update(sex=callback_data['sex']).apply()
 
     await call.message.answer(f"Теперь пришли мне рост", reply_markup=menu)

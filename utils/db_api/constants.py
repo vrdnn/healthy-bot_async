@@ -2,5 +2,7 @@ WEIGHT_LOSS = "Похудение"
 WEIGHT_GAIN = "Набор массы"
 WEIGHT_TONE = "Поддержка в тонусе"
 
+WORKOUT_TYPE = {WEIGHT_LOSS: WEIGHT_LOSS, WEIGHT_GAIN: WEIGHT_GAIN, WEIGHT_TONE: WEIGHT_TONE}
+
 MAN = "man"
 WOMAN = "woman"
