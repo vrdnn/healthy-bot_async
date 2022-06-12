@@ -42,7 +42,7 @@ def workout_keyboard(workout: Workout):
 
 def iteration_keyboard(iteration: WorkoutIteration, prev_iteration_id: int, next_iteration_id: int):
     keyboard = InlineKeyboardMarkup(row_width=2)
-    if prev_iteration_id:
+    if prev_iteration_id is not None:
         keyboard.add(
             InlineKeyboardButton(text="🔙", callback_data=iteration_callback.new(id=prev_iteration_id)),
         )
@@ -50,7 +50,7 @@ def iteration_keyboard(iteration: WorkoutIteration, prev_iteration_id: int, next
         keyboard.add(
             InlineKeyboardButton(text="🔙", callback_data=workout_callback.new(id=iteration.workout_id))
         )
-    if next_iteration_id:
+    if next_iteration_id is not None:
         keyboard.insert(
             InlineKeyboardButton(text="🔜", callback_data=iteration_callback.new(id=next_iteration_id)),
         )
