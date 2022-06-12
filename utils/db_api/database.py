@@ -13,7 +13,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 from data.config import DATABASE_URL
-from .constants import MAN, WOMAN, WORKOUT_TYPE
+from .constants import MAN, WOMAN, WORKOUT_TYPE, NUTRITION_TYPE
 from .types import ChoiceType
 
 Base = declarative_base()
@@ -135,6 +135,29 @@ class Workout(BaseModel):
                   nullable=False)
 
     _idx = Index('workout_id_index', 'id')
+
+
+class Nutrition(BaseModel):
+    __tablename__ = 'nutrition'
+
+    id = Column(Integer, Sequence('nutrition_id_seq'), primary_key=True)
+    name = Column(String(32))
+    type = Column(ChoiceType(NUTRITION_TYPE), nullable=False)
+    description = Column(String(256))
+
+    _idx = Index('nutrition_id_index', 'id')
+
+
+class NutritionMeal(BaseModel):
+    __tablename__ = 'nutrition_mealtime'
+
+    id = Column(Integer, Sequence('nutrition_mealtime_id_seq'), primary_key=True)
+    name = Column(String(256))
+    mealtime = Column(String(32))
+    amount = Column(String(32))
+    nutrition_id = Column(Integer, ForeignKey('nutrition.id'))
+
+    _idx = Index('nutrition_mealtime_id_index', 'id')
 
 
 async def create_database():

@@ -9,3 +9,5 @@ def calculate_calories_for_product(product: str, gram: int):
     search_result = [value for key, value in calories_for_product.items() if product in key]
     if search_result:
         return int((sum(search_result) / len(search_result)) / 100 * gram)
+
+
