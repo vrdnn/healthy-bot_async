@@ -1,8 +1,10 @@
 from typing import List
+
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboards.inline.callback_data import snack_callback, ration_callback, nutrition_by_type_callback, \
-    nutrition_callback, select_nutrition_type_callback, start_nutrition_callback, meal_callback
+    nutrition_callback, select_nutrition_type_callback, start_nutrition_callback, meal_callback, \
+    subscribe_nutrition_callback, unsubscribe_nutrition_callback
 from utils.db_api.constants import NUTRITION_TYPE
 from utils.db_api.database import Nutrition, NutritionMeal
 
@@ -39,12 +41,20 @@ def nutritions_keyboard(nutritions: List[Nutrition]):
     return keyboard
 
 
-def nutrition_prev_next_keyboard(nutrition: Nutrition):
+def nutrition_choose_keyboard(nutrition: Nutrition, is_notifiable: bool):
     keyboard = InlineKeyboardMarkup(row_width=2)
     keyboard.row(
         InlineKeyboardButton(text="🔙", callback_data=nutrition_by_type_callback.new(type=nutrition.type)),
         InlineKeyboardButton(text="🏃🏻‍♂️", callback_data=start_nutrition_callback.new(id=nutrition.id)),
     )
+    if is_notifiable:
+        keyboard.add(InlineKeyboardButton(text="🔕 Отключить уведомления",
+                                          callback_data=unsubscribe_nutrition_callback.new(id=nutrition.id)))
+
+    else:
+        keyboard.add(InlineKeyboardButton(text="🔔 Включить уведомления",
+                                          callback_data=subscribe_nutrition_callback.new(id=nutrition.id)))
+
     return keyboard
 
 

@@ -6,11 +6,10 @@ from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.exceptions import BotBlocked
 from gino import Gino
-from sqlalchemy import String, Index, Sequence, sql, DateTime, func, and_
-from sqlalchemy import Table, Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import String, Index, Sequence, sql, DateTime, func, and_, Time
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 
 from data.config import DATABASE_URL
 from .constants import MAN, WOMAN, WORKOUT_TYPE, NUTRITION_TYPE
@@ -153,11 +152,22 @@ class NutritionMeal(BaseModel):
 
     id = Column(Integer, Sequence('nutrition_mealtime_id_seq'), primary_key=True)
     name = Column(String(256))
+    time = Column(Time)
     mealtime = Column(String(32))
     amount = Column(String(32))
     nutrition_id = Column(Integer, ForeignKey('nutrition.id'))
 
     _idx = Index('nutrition_mealtime_id_index', 'id')
+
+
+class UserToNotifyAboutNutritionMeal(BaseModel):
+    __tablename__ = 'user_to_notify_about_nutrition_mealtime'
+
+    id = Column(Integer, Sequence('user_to_notify_about_nutrition_mealtime_id_seq'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    nutrition_id = Column(Integer, ForeignKey('nutrition.id'))
+
+    _idx = Index('user_to_notify_about_nutrition_mealtime_id_index', 'id')
 
 
 async def create_database():
