@@ -55,8 +55,9 @@ async def bot_workout_iteration(call: CallbackQuery, callback_data: dict):
     iteration = await WorkoutIteration.get(WorkoutIteration.id == int(callback_data['id']))
     exercise = await Exercise.get(Exercise.id == iteration.exercise_id)
     prev_iteration_id, next_iteration_id = await get_next_and_prev_iteration_id(current_iteration=iteration)
+    exercise_name = f"<a href='{exercise.image}'>{exercise.name}</a>" if exercise.image else exercise.name
     await call.message.edit_text(
-        text=f"🏋🏻‍♂️ {exercise.name}\n\n👨🏻‍🏫 {exercise.description}\n\n🔢 {iteration.amount}",
+        text=f"🏋🏻‍♂️ {exercise_name}\n\n👨🏻‍🏫 {exercise.description}\n\n🔢 {iteration.amount}",
         reply_markup=iteration_keyboard(
             iteration=iteration, prev_iteration_id=prev_iteration_id, next_iteration_id=next_iteration_id
         )
