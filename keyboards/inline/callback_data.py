@@ -9,7 +9,6 @@ snack_callback = CallbackData("snack")
 snack_add_callback = CallbackData("snack_add")
 
 select_workout_type_callback = CallbackData("select_workout_type")
-select_nutrition_type_callback = CallbackData("select_nutrition_type")
 workout_by_type_callback = CallbackData("workout_type", "type")
 nutrition_by_type_callback = CallbackData("nutrition_type", "type")
 subscribe_nutrition_callback = CallbackData("subscribe_nutrition", "id")

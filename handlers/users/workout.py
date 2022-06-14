@@ -6,7 +6,7 @@ from keyboards.inline.callback_data import workout_by_type_callback, select_work
     start_workout_callback, iteration_callback
 from keyboards.inline.workout import workout_type_keyboard, workouts_keyboard, workout_keyboard, iteration_keyboard
 from loader import dp
-from utils.db_api.database import Workout, WorkoutIteration, Exercise
+from utils.db_api.database import Workout, WorkoutIteration, Exercise, User
 from utils.workout.exercise import get_next_and_prev_iteration_id
 
 
@@ -23,7 +23,8 @@ async def bot_select_workout_type(call: CallbackQuery, callback_data: dict):
 
 @dp.callback_query_handler(workout_by_type_callback.filter())
 async def bot_workouts_by_type(call: CallbackQuery, callback_data: dict):
-    workouts = await Workout.filter(Workout.type == callback_data['type'])
+    user = await User.get(User.id == call.from_user.id)
+    workouts = await Workout.filter(Workout.type == callback_data['type'], Workout.sex == user.sex)
     await call.message.edit_text(text="Выбери тренировку из списка ниже:",
                                  reply_markup=workouts_keyboard(workouts=workouts))
 

@@ -26,14 +26,14 @@ class BaseModel(database.Model):
     @classmethod
     async def get(cls, *args, select_values: list | tuple = ()):
         if select_values:
-            return await cls.select(*select_values).where(and_(*args)).gino.first()
-        return await cls.query.where(and_(*args)).gino.first()
+            return await cls.select(*select_values).where(and_(*args)).order_by("id").gino.first()
+        return await cls.query.where(and_(*args)).order_by("id").gino.first()
 
     @classmethod
     async def filter(cls, *args, select_values: list | tuple = ()):
         if select_values:
-            return await cls.select(*select_values).where(and_(*args)).gino.all()
-        return await cls.query.where(and_(*args)).gino.all()
+            return await cls.select(*select_values).where(and_(*args)).order_by("id").gino.all()
+        return await cls.query.where(and_(*args)).order_by("id").gino.all()
 
     @classmethod
     async def all(cls):
@@ -109,6 +109,7 @@ class Exercise(BaseModel):
     id = Column(Integer, Sequence('exercise_id_seq'), primary_key=True)
     name = Column(String(32))
     description = Column(String(256))
+    image = Column(String(256))
 
     _idx = Index('exercise_id_index', 'id')
 
@@ -132,6 +133,7 @@ class Workout(BaseModel):
     description = Column(String(256))
     type = Column(ChoiceType(WORKOUT_TYPE),
                   nullable=False)
+    sex = Column(ChoiceType({MAN: MAN, WOMAN: WOMAN}))
 
     _idx = Index('workout_id_index', 'id')
 
@@ -143,6 +145,7 @@ class Nutrition(BaseModel):
     name = Column(String(32))
     type = Column(ChoiceType(NUTRITION_TYPE), nullable=False)
     description = Column(String(256))
+    sex = Column(ChoiceType({MAN: MAN, WOMAN: WOMAN}))
 
     _idx = Index('nutrition_id_index', 'id')
 

@@ -8,7 +8,7 @@ from keyboards.inline.callback_data import ration_callback, nutrition_by_type_ca
 from keyboards.inline.nutrition import nutrition_type_keyboard, nutritions_keyboard, meal_keyboard, \
     nutrition_choose_keyboard
 from loader import dp
-from utils.db_api.database import Nutrition, NutritionMeal, UserToNotifyAboutNutritionMeal
+from utils.db_api.database import Nutrition, NutritionMeal, UserToNotifyAboutNutritionMeal, User
 from utils.nutrition.meal import get_next_and_prev_meal_id
 
 
@@ -19,7 +19,8 @@ async def bot_select_nutrition_type(call: CallbackQuery, callback_data: dict):
 
 @dp.callback_query_handler(nutrition_by_type_callback.filter())
 async def bot_nutrition_by_type(call: CallbackQuery, callback_data: dict):
-    nutritions = await Nutrition.filter(Nutrition.type == callback_data['type'])
+    user = await User.get(User.id == call.from_user.id)
+    nutritions = await Nutrition.filter(Nutrition.type == callback_data['type'], Nutrition.sex == user.sex)
     await call.message.edit_text(text="Выбери рацион из списка ниже:",
                                  reply_markup=nutritions_keyboard(nutritions=nutritions))
 

@@ -3,7 +3,7 @@ from typing import List
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboards.inline.callback_data import snack_callback, ration_callback, nutrition_by_type_callback, \
-    nutrition_callback, select_nutrition_type_callback, start_nutrition_callback, meal_callback, \
+    nutrition_callback, start_nutrition_callback, meal_callback, \
     subscribe_nutrition_callback, unsubscribe_nutrition_callback
 from utils.db_api.constants import NUTRITION_TYPE
 from utils.db_api.database import Nutrition, NutritionMeal
@@ -37,7 +37,7 @@ def nutritions_keyboard(nutritions: List[Nutrition]):
             for nutrition in nutritions
         ]
     )
-    keyboard.add(InlineKeyboardButton(text="🔙", callback_data=select_nutrition_type_callback.new()))
+    keyboard.add(InlineKeyboardButton(text="🔙", callback_data=ration_callback.new()))
     return keyboard
 
 
