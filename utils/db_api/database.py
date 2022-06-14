@@ -139,7 +139,7 @@ class Workout(BaseModel):
 
 
 class Nutrition(BaseModel):
-    __tablename__ = 'nutrition'
+    __tablename__ = 'nutritions'
 
     id = Column(Integer, Sequence('nutrition_id_seq'), primary_key=True)
     name = Column(String(32))
@@ -151,24 +151,33 @@ class Nutrition(BaseModel):
 
 
 class NutritionMeal(BaseModel):
-    __tablename__ = 'nutrition_mealtime'
+    __tablename__ = 'nutrition_meals'
 
-    id = Column(Integer, Sequence('nutrition_mealtime_id_seq'), primary_key=True)
-    name = Column(String(256))
+    id = Column(Integer, Sequence('nutrition_meal_id_seq'), primary_key=True)
     time = Column(Time)
     mealtime = Column(String(32))
-    amount = Column(String(32))
-    nutrition_id = Column(Integer, ForeignKey('nutrition.id'))
+    nutrition_id = Column(Integer, ForeignKey('nutritions.id'))
 
-    _idx = Index('nutrition_mealtime_id_index', 'id')
+    _idx = Index('nutrition_meal_id_index', 'id')
+
+
+class Meal(BaseModel):
+    __tablename__ = 'meals'
+
+    id = Column(Integer, Sequence('meal_id_seq'), primary_key=True)
+    name = Column(String(256))
+    amount = Column(String(32))
+    nutrition_meal_id = Column(Integer, ForeignKey('nutrition_meals.id'))
+
+    _idx = Index('meal_id_index', 'id')
 
 
 class UserToNotifyAboutNutritionMeal(BaseModel):
-    __tablename__ = 'user_to_notify_about_nutrition_mealtime'
+    __tablename__ = 'user_to_notify_about_nutrition_mealtimes'
 
     id = Column(Integer, Sequence('user_to_notify_about_nutrition_mealtime_id_seq'), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    nutrition_id = Column(Integer, ForeignKey('nutrition.id'))
+    nutrition_id = Column(Integer, ForeignKey('nutritions.id'))
 
     _idx = Index('user_to_notify_about_nutrition_mealtime_id_index', 'id')
 

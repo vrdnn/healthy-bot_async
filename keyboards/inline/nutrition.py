@@ -58,7 +58,7 @@ def nutrition_choose_keyboard(nutrition: Nutrition, is_notifiable: bool):
     return keyboard
 
 
-def meal_keyboard(meal: NutritionMeal, prev_meal_id: int, next_meal_id: int):
+def nutrition_meal_keyboard(nutrition_meal: NutritionMeal, prev_meal_id: int, next_meal_id: int):
     keyboard = InlineKeyboardMarkup(row_width=2)
     if prev_meal_id is not None:
         keyboard.add(
@@ -66,7 +66,7 @@ def meal_keyboard(meal: NutritionMeal, prev_meal_id: int, next_meal_id: int):
         )
     else:
         keyboard.add(
-            InlineKeyboardButton(text="🔙", callback_data=nutrition_callback.new(id=meal.nutrition_id))
+            InlineKeyboardButton(text="🔙", callback_data=nutrition_callback.new(id=nutrition_meal.nutrition_id))
         )
     if next_meal_id is not None:
         keyboard.insert(
@@ -74,6 +74,6 @@ def meal_keyboard(meal: NutritionMeal, prev_meal_id: int, next_meal_id: int):
         )
     else:
         keyboard.insert(
-            InlineKeyboardButton(text="🏁", callback_data=nutrition_callback.new(id=meal.nutrition_id))
+            InlineKeyboardButton(text="🏁", callback_data=nutrition_callback.new(id=nutrition_meal.nutrition_id))
         )
     return keyboard
