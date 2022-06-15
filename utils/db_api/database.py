@@ -120,7 +120,7 @@ class WorkoutIteration(BaseModel):
     id = Column(Integer, Sequence('workout_iteration_id_seq'), primary_key=True)
     workout_id = Column(Integer, ForeignKey('workouts.id'))
     exercise_id = Column(Integer, ForeignKey('exercises.id'))
-    amount = Column(String(32))
+    amount = Column(String())
 
     _idx = Index('workout_iteration_id_index', 'id')
 
