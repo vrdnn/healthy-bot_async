@@ -4,8 +4,9 @@ from typing import List
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
+from pytz import timezone
 
-from data.constants import calories_for_product
+from data.config import TIMEZONE
 from keyboards.inline.callback_data import snack_add_callback, snack_callback
 from keyboards.inline.snack import snack_keyboard
 from loader import dp
@@ -22,7 +23,8 @@ async def bot_snack(message: types.Message):
     sum_calories = 0
 
     for snack in snacks:
-        text += f"⏱ {snack.created_at.strftime('%H:%M')}\nПродукт: {snack.product}\nКалории: {snack.quantity}\nГраммы: {snack.gram}\n\n"
+        datetime_str = snack.created_at.astimezone(timezone(TIMEZONE)).strftime('%H:%M')
+        text += f"⏱ {datetime_str}\nПродукт: {snack.product}\nКалории: {snack.quantity}\nГраммы: {snack.gram}\n\n"
         sum_calories += snack.quantity
 
     if sum_calories:
@@ -42,7 +44,8 @@ async def bot_snack_callback(call: CallbackQuery, callback_data: dict):
     sum_calories = 0
 
     for snack in snacks:
-        text += f"⏱ {snack.created_at.strftime('%H:%M')}\nПродукт: {snack.product}\nКалории: {snack.quantity}\nГраммы: {snack.gram}\n\n"
+        datetime_str = snack.created_at.astimezone(timezone(TIMEZONE)).strftime('%H:%M')
+        text += f"⏱ {datetime_str}\nПродукт: {snack.product}\nКалории: {snack.quantity}\nГраммы: {snack.gram}\n\n"
         sum_calories += snack.quantity
 
     if sum_calories:
